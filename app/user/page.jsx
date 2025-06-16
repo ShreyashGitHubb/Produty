@@ -18,8 +18,12 @@ export default function UserFormClient() {
 
   // This function runs after the form is successfully submitted
   const onSubmit = (data) => {
+    console.log(data);
+    
     // Add the new entry to the list
-    setEntries(prev => [...prev, data]);
+    // setEntries(prev => [...prev, data]);
+    // console.log(entries);
+    
 
     // Clear the form inputs
     reset();

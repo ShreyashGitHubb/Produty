@@ -14,3 +14,16 @@ model User {
   phone     String
   createdAt DateTime @default(now())
 }
+
+model Person{
+  id String @id @default(cuid())
+  name String
+  phone String
+}
+
+model Class{
+  id String @id @default(cuid())
+  name String
+  phone String
+  age String
+}

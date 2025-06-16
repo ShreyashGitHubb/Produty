@@ -22,14 +22,21 @@ export default function UserPage() {
     formData.append('name', data.name);
     formData.append('phone', data.phone);
 
-    await createUser(formData);
+    await createUser(formData);//formDate ek andar ek object
     await loadUsers();
     reset();
   };
 
+
+    const onSUbmitB = async () => {
+    await createUser();
+  };
+
+
   return (
     <div className="p-6 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-4">User Form</h1>
+      <button onClick={onSUbmitB}>add in db</button>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <input {...register('name')} placeholder="Name" className="w-full p-2 border rounded" />

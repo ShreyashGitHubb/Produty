@@ -8,8 +8,10 @@ export async function createUser(formData) {
 
   if (!name || !phone) return;
 
-  await prisma.user.create({
-    data: { name, phone },
+  await prisma.person.create({
+    data: { 
+     name,phone
+     },
   });
 }
 

@@ -7,7 +7,7 @@ export default function Home() {
   const [count, setCount] = useState(100);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 gap-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 gap-6" >
       <h1 className="text-4xl font-bold text-gray-800">Counter App</h1>
 
       <div className="text-6xl font-semibold text-blue-600">{count}</div>

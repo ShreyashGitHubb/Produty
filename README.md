@@ -1,185 +1,105 @@
-It uses:
+# Produty – Simple Product CRUD App
 
-* Next.js (App Router)
-* Prisma ORM + Supabase
-* Gemini API (for generating text answers or product descriptions from prompt)
-* UI components from `shadcn/ui`
+## 📘 Description
 
----
+**Produty** is a lightweight and intuitive CRUD (Create, Read, Delete) web application designed to manage product data effortlessly. It provides a clean and user-friendly interface for core operations on products, ideal for learning full-stack development or building quick prototypes.
 
-## STEP 1 – Clone the Project
-
-```bash
-git clone https://github.com/Prathamesh01110/CRUD-APP.git
-cd CRUD-APP
-npm install
-```
+### ✅ Features
+- **🆕 Create products** with name, price, and description
+- **📋 View all products** in a neat list or table
+- **❌ Delete products** with a single click
+- **🔐 No authentication**, keeping it minimal and accessible
+- Structured for rapid setup and easy experimentation
 
 ---
 
-## STEP 2 – Connect to Supabase
+## 🛠️ Tech Stack
+*(Adjust this list to reflect your actual implementation)*
+- **Frontend**: React (or plain HTML/CSS/JS)
+- **Backend**: Node.js + Express (or Python Flask, Django, etc.)
+- **Database**: MongoDB / MySQL / SQLite
+- **ORM / ODM**: Mongoose / Sequelize / TypeORM
+- **Others**: Axios for HTTP requests, Bootstrap/Tailwind for UI (if used)
 
-1. Go to [https://supabase.com](https://supabase.com) and create a new project.
-2. Get your Supabase **database URL** and **anon/public API key**.
+---
 
-Create a `.env` file in the root of your project and add:
+## 🚀 Quick Start
+
+1. **Clone the repo**
+    ```bash
+    git clone https://github.com/ShreyashGitHubb/Produty.git
+    cd Produty
+    ```
+
+2. **Install dependencies**
+    ```bash
+    # Try this 
+    npm install
+
+    # if above not work 
+    npm install --legacy-peer-deps
+
+    ```
+
+3. **Configure environment**
+    - Copy `.env.example` to `.env`
+    - Set your environment variables, e.g.:
+    ## 🛠️ Environment Variables (.env)
+
+Make a `.env` file in the root of your project and include the following keys:
 
 ```env
-DATABASE_URL="postgresql://<your-db-username>:<password>@<host>:<port>/<db-name>"
-```
+# DATABASE CONNECTION STRINGS
+DATABASE_URL=           # Your primary DB connection string
+DIRECT_URL=             # Optional: direct access URL for the database (used by ORMs)
 
-You can find this under **Project Settings → Database → Connection Info** in Supabase.
+# CLERK AUTH KEYS
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=   # Public key used in frontend
+CLERK_SECRET_KEY=                    # Private key for server-side Clerk operations
+
+# GOOGLE GEMINI
+GEMINI_API_KEY=         # Your Google Gemini AI API key
+
+# RESEND (EMAIL SERVICE)
+RESEND_API_KEY=         # API key to send transactional emails via Resend
+
+# ARCJET (SECURITY/PROXY SERVICE)
+ARCJET_KEY=             # API key for Arcjet edge middleware or protection services
+```
+4. **Run the project**
+    - **Use This**:
+      ```bash
+      npm run dev
+      ```
+
+5. **Test it out**
+    - Open `http://localhost:3000` (frontend) or use Postman / curl on `http://localhost:5000/products`
 
 ---
 
-## STEP 3 – Initialize Prisma
+## 🤝 Contributing
 
-If you haven't already:
-
-```bash
-npx prisma init
-```
-
-This will create:
-
-* `prisma/schema.prisma` → Your database schema
-* `.env` → For your database URL
-
-Edit `schema.prisma` with your models.
-
-Example:
-
-```prisma
-model Product {
-  id        String   @id @default(cuid())
-  name      String
-  price     Int
-  createdAt DateTime @default(now())
-}
-```
-
-Then run:
-
-```bash
-npx prisma migrate dev --name init
-```
-
-This creates the tables in your Supabase database.
+1. Fork the repo.
+2. Create your feature branch:
+    ```bash
+    git checkout -b feature/your-feature
+    ```
+3. Commit your changes:
+    ```bash
+    git commit -m "Add some feature"
+    ```
+4. Push to the branch:
+    ```bash
+    git push origin feature/your-feature
+    ```
+5. Open a Pull Request. I'll review it!
 
 ---
 
-## Prisma Commands – Quick Guide
+## 📝 License
 
-```bash
-npx prisma init              # Initializes Prisma project
-npx prisma db push          # Push schema to DB without creating a migration
-npx prisma migrate dev      # Applies schema and creates a versioned migration
-npx prisma studio           # Opens Prisma Studio (DB UI)
-npx prisma generate         # Regenerates Prisma Client (after schema change)
-npx prisma format           # Formats your schema.prisma file
-```
-
-### Tips
-
-* Use `db push` for quick testing
-* Use `migrate dev` to track schema changes
-* Use `studio` to visually check your data
+This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Project Structure – Pages Overview
-
-### `/user`
-
-* A simple form to store user name and phone number **locally**
-* No database connection
-
-### `/admin`
-
-* Connected to **Supabase using Prisma**
-* Supports **Create** and **Read** operations (C, R)
-
-### `/superadmin`
-
-* Connected to **Supabase**
-* Supports full **CRUD**: Create, Read, Update, Delete
-
-### `/answers`
-
-* Integrates **Gemini API**
-* Accepts a user text prompt and returns an AI-generated response
-
----
-
-## `lib/` Folder Explained
-
-### `lib/prisma.js` – Prisma Client Singleton
-
-```js
-import { PrismaClient } from '@prisma/client';
-
-export const prisma = globalThis.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-    globalThis.prisma = prisma;
-}
-```
-
-✅ Use this to safely access the DB across pages/components.
-
-```js
-import { prisma } from "@/lib/prisma";
-```
-
----
-
-### `lib/gemini.js` – Gemini API Wrapper
-
-```js
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-export async function generateAnswer(prompt) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  return response.text();
-}
-```
-
-✅ Call this function from server actions or route handlers:
-
-```js
-const answer = await generateAnswer("Write a cool description for iPhone 15");
-```
-
----
-
-## UI Components – shadcn/ui
-
-We are using `shadcn/ui` for modern styled React components.
-It's built on top of Tailwind CSS.
-
-Example:
-
-```js
-import { Button } from "@/components/ui/button";
-
-<Button className="bg-blue-600 text-white">Click Me</Button>
-```
-
-Use prebuilt inputs, cards, modals, and other UI components.
-
----
-
-## Useful Summary
-
-* Clone the repo and install packages
-* Set `DATABASE_URL` from Supabase in `.env`
-* Run Prisma setup commands
-* Build pages: `/user`, `/admin`, `/superadmin`, `/answers`
-* Use `lib/prisma` for DB and `lib/gemini` for AI
-* UI is styled with `shadcn/ui`
-
-✅ You're ready to build and test the app!
+### 😊 Thanks for checking out Produty!

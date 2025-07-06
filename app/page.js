@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma';
+// import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
-// import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma';
 import ProductCard from '../components/ProductCard';
 
 export default async function Home() {
